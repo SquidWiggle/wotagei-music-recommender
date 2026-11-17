@@ -24,23 +24,24 @@ These proxies transfer well to **Western pop tracks that follow `Verse -> Pre-Ch
 
 ### 1.1 Primary Source Verification Status (`wikiwiki.jp/neosr/`)
 
-Direct HTTP `GET` requests from our workspace environment to the two requested `wikiwiki.jp` pages were blocked by egress proxy policy:
+Both requested `wikiwiki.jp/neosr/` primary pages were retrieved live (`HTTP 200 OK`) and parsed:
 
 | Target URL | Retrieval Method | Status & Exact Observation |
 | :--- | :--- | :--- |
-| `https://wikiwiki.jp/neosr/ヲタ芸の基本的な構成` | Direct `curl` GET | **Blocked (`HTTP/2 403`)**: `Request to GET /neosr/ヲタ芸の基本的な構成 on wikiwiki.jp not allowed by policy` |
-| `https://wikiwiki.jp/neosr/打ち曲` | Direct `curl` GET | **Blocked (`HTTP/2 403`)**: `Request to GET /neosr/打ち曲 on wikiwiki.jp not allowed by policy` |
-| `wikiwiki.jp/neosr/` (indexed pages) | Web search grounding | **Partially verified via search snippets** (exact verbatim page text beyond indexed snippets remains **unverified** due to the 403 block) |
+| `https://wikiwiki.jp/neosr/ヲタ芸の基本的な構成` | Live HTTP `GET` | **Verified (`200 OK`)** — *ヲタ芸の基本的な構成 - ヲタ芸 Wiki\**; `Last-modified: 2021-04-18 (日) 15:30:49` |
+| `https://wikiwiki.jp/neosr/打ち曲` | Live HTTP `GET` | **Verified (`200 OK`)** — *打ち曲 - ヲタ芸 Wiki\**; `Last-modified: 2024-05-11 (土) 19:56:32` |
 
-**What was verified from indexed `wikiwiki.jp/neosr/` snippets:**
-- **ヲタ芸 Wiki\* (NEOSr admin)** documents standard routine structure across `Aメロ`, `Bメロ`, and `サビ` (including `ラスサビ`):
-  - **Aメロ:** Uses foundational moves such as **OAD** (Over Action Dolphin / オー・エー・ディー), and in underground-style wotagei (`地下芸`) may enter from the cue *"check, set, open"* (`チェック・セット・オープン`), or include moves like `ニーハイオーハイ` and `ソイヤ` (4-thrust pattern), with the connecting thrust at the A-to-B transition frequently omitted.
-  - **Bメロ:** Bridges `Aメロ` to `サビ` using three documented patterns depending on section length and style:
-    1. All performers execute a fixed number of **Rosario** (`ロザリオ`) or **Los Angeles** (`ロサンゼルス`) repetitions (common when `Bメロ` is short).
-    2. Performers insert an upward/chorus-move preview before transitioning upward into the chorus.
-    3. Performers execute **Rosario** in a prescribed sequence and converge onto unison **Rosario** at the end of `Bメロ`.
-  - **サビ / ラスサビ:** Executes high-energy **サビ技** (chorus moves) such as **Romance** (`ロマンス`), **Thunder Snake** (`サンダースネイク`), **Amaterasu** (`アマテラス`), and **Muramasa** (`ムラマサ`), with routines paced in units of **`1エイト` = 8 counts** and **`32カウント` = 4 eights** (8 bars of 4/4). Later counts of a chorus move (e.g., `ロマンス警報`) can act as a cue into subsequent phrases.
-- **On `打ち曲` / `おすすめ打ち曲` on `wikiwiki.jp/neosr/`:** Search snippets show navigation entries for `打ち曲` and `ヲタ芸 おすすめ打ち曲` in the wiki menu/glossary, alongside individual song/routine pages (e.g., `ロマンチック`, `シリウス`, `サマータイムレコード`, `ミシャグジ`, `炎火`, `アーリークロス`, `メテオロロジスト`, `神楽`), and indicate that NEOSr discussions historically dispersed song examples across move/performer pages rather than maintaining a comprehensive numerical BPM table. Because the live `https://wikiwiki.jp/neosr/打ち曲` page returned HTTP 403, its exact current contents, prose criteria, and any song table on that page are marked **unverified**.
+**Exact findings verified from live `wikiwiki.jp/neosr/` pages:**
+- **`ヲタ芸の基本的な構成` (`Last-modified: 2021-04-18`):** Documents the canonical song and routine flow (`基本技な曲の構成`: `Aメロ→Bメロ→サビ→間奏→ラスサビ`, noting recent videos sometimes deviate, though most follow this baseline):
+  - **`Aメロ`:** `OAD6回→ニーハイオーハイ→OAD4回→ソイヤ(4突き)`, repeated, with the 4-thrust `ソイヤ` at the end of `Aメロ` usually omitted when transitioning into `Bメロ`.
+  - **`Bメロ`:** Bridges `Aメロ` to `サビ` via three patterns:
+    1. All performers execute a fixed count of **Rosario (`ロザリオ`)** or **Los Angeles (`ロサンゼルス`)** (used when `Bメロ` is short).
+    2. Performers insert a chorus-move motif before transitioning upward—either switching to `ロザリオ` mid-way or completing it before `ロザリオ` (used when `Bメロ` is long).
+    3. Performers execute `ロザリオ` in a prescribed sequence and converge onto unison `ロザリオ` at the end of `Bメロ` (used when `Bメロ` is long).
+  - **`サビ`:** `適当なサビ技→ロマンス` (an appropriate chorus move followed by **Romance**; some songs use a free slot in `ロマンス` for leftover chorus counts).
+  - **`間奏`:** `サビ技` (chorus-level technical moves).
+  - **`ラスサビ`:** `適当なサビ技→ロマンス` (same structure as `サビ`, most often featuring foundational signature moves such as **Thunder Snake (`サンダースネイク`)** or **Amaterasu (`アマテラス`)**).
+- **`打ち曲` (`Last-modified: 2024-05-11`):** Lists **90 song entries** (89 distinct titles; `Crossing Field` appears twice, and 3 entries—`アイドル ?`, `最高速Fall in love ?`, `ワールズエンドダンスホール ?`—link to uncreated wiki stubs) grouped alphabetically (`〈ア行から始まる曲〉` through `〈ワ行から始まる曲〉` plus `〈theから始まる曲〉`). The index page provides **song titles only** (no artist names, no BPM table, and no selection rubric prose), spanning classic anison/voice-actor anthems (`ETERNAL BLAZE`, `Endless Story`, `Only My Railgun`, `Synchrogazer`, `Crossing Field`, `紅蓮の弓矢`, `Joint`), Vocaloid standards (`千本桜`, `地球最後の告白を`, `空奏列車`, `ローリンガール`, `ルカルカ★ナイトフィーバー`, `ブラック★ロックシューター`, `六兆年と一夜物語`), and rhythmic/electronic tracks (`Fire◎Flower`, `脳漿炸裂ガール`, `凛として咲く花の如く`, `The Beginning`).
 
 ### 1.2 Definition of *Takamari* (高まり) and *Uchi-kyoku* (打ち曲)
 
@@ -425,7 +426,7 @@ Neither the **iTunes Search API** (`previewUrl`, 30s AAC/MP4) nor the **Deezer A
 12. **Librosa Documentation:** [`librosa.feature.rms`](https://librosa.org/doc/latest/generated/librosa.feature.rms.html), [`librosa.onset.onset_strength`](https://librosa.org/doc/latest/generated/librosa.onset.onset_strength.html), [`librosa.onset.onset_detect`](https://librosa.org/doc/latest/generated/librosa.onset.onset_detect.html), [`librosa.feature.spectral_centroid`](https://librosa.org/doc/latest/generated/librosa.feature.spectral_centroid.html), [`librosa.beat.beat_track`](https://librosa.org/doc/latest/generated/librosa.beat.beat_track.html), [`librosa.segment.agglomerative`](https://librosa.org/doc/latest/generated/librosa.segment.agglomerative.html), and [Laplacian segmentation example](https://librosa.org/doc/latest/auto_examples/plot_segmentation.html).
 13. **Essentia Documentation (UPF MTG):** [`LoudnessEBUR128`](https://essentia.upf.edu/reference/std_LoudnessEBUR128.html), [`OnsetRate`](https://essentia.upf.edu/reference/std_OnsetRate.html), [`RhythmExtractor2013`](https://essentia.upf.edu/reference/std_RhythmExtractor2013.html), [`Centroid`](https://essentia.upf.edu/reference/std_Centroid.html), [`Flux`](https://essentia.upf.edu/reference/std_Flux.html), [`AudioLoader`](https://essentia.upf.edu/reference/std_AudioLoader.html).
 14. **Wotagei Community References:**
-    - `https://wikiwiki.jp/neosr/ヲタ芸の基本的な構成` *(direct HTTP GET blocked by proxy policy: HTTP 403; indexed summary verified via search grounding)*.
-    - `https://wikiwiki.jp/neosr/打ち曲` *(direct HTTP GET blocked by proxy policy: HTTP 403; partial menu/page metadata observed via search grounding, page body unverified)*.
+    - [`https://wikiwiki.jp/neosr/ヲタ芸の基本的な構成`](https://wikiwiki.jp/neosr/%E3%83%B2%E3%82%BF%E8%8A%B8%E3%81%AE%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E6%A7%8B%E6%88%90) *(live HTTP `200 OK`; `Last-modified: 2021-04-18 (日) 15:30:49`)*.
+    - [`https://wikiwiki.jp/neosr/打ち曲`](https://wikiwiki.jp/neosr/%E6%89%93%E3%81%A1%E6%9B%B2) *(live HTTP `200 OK`; `Last-modified: 2024-05-11 (土) 19:56:32`; 90 title-only entries)*.
     - Niconico Pedia: [ヲタ芸](https://dic.nicovideo.jp/a/ヲタ芸), [PPPH](https://dic.nicovideo.jp/a/PPPH).
     - Japanese Wikipedia: [オタ芸](https://ja.wikipedia.org/wiki/オタ芸).

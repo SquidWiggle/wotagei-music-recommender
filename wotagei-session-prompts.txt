@@ -72,7 +72,7 @@ Simulation` into our AI110 Week 9 Final Project (`Applied AI System`): a
 wotagei (ヲタ芸 / 打ち曲) recommender. Goal: recommend songs with AB melo ->
 chorus structure, a target BPM range, and a takamari rise into the chorus, with
 confidence scoring, guardrails/logging, a reproducible evaluation test harness
-(+2 stretch), and a 1-minute video demo display. Seed examples are my 95-song
+(+2 stretch), and a 1-minute video demo display. Seed examples are my 102-song
 YouTube Music playlist below (with YouTube `[video_id]`s). Keep it
 class-project sized, then produce the implementation spec in `docs/` and
 `diagrams/architecture.mmd` via `/plan`.
@@ -214,10 +214,16 @@ Open decisions to settle in this session:
   94. RPG — School Food Punishment [UQuJvuTqimE]
   95. How to Go — School Food Punishment [mhu4Axq1LPw]
   96. DO! — METANICK [8EfeKSX0CQk]
+  97. Crossing Field — LiSA [KId6eunoiWk]
+  98. 地球最後の告白を - The Earth's Final Confession — KEMU VOXX feat. GUMI [s8KBk8ZRH54]
+  99. ローリンガール - Rolling Girl — wowaka feat. 初音ミク [vnw8zURAxkU]
+  100. 空奏列車 - Kuusou Ressha — Orangestar feat. IA & 初音ミク [xzoShzMIlIM]
+  101. ブラック★ロックシューター - Black★Rock Shooter — supercell feat. 初音ミク [40D2xsVsJ78]
+  102. Future Diver — Dempagumi.inc
 
 - Language scope: Japanese-only 打ち曲 vs. mixed JP + English tracks that share
   AB-melo -> chorus + takamari structure.
-- Reference examples: https://wikiwiki.jp/neosr/打ち曲
+- Reference examples: https://wikiwiki.jp/neosr/打ち曲 (`200 OK`, 90 titles) and https://wikiwiki.jp/neosr/ヲタ芸の基本的な構成 (`200 OK`)
 
 
 ------------------------------------------------------------
@@ -228,7 +234,7 @@ Prereq: spec in `docs/` exists from Phase 2
 /teamwork Implement the spec in `docs/` using parallel workers so all AI110
 Week 9 Project 4 rubric + stretch requirements pass:
 
-1) `catalog-builder`: Build the song dataset CSV in `data/` from the 95-song
+1) `catalog-builder`: Build the song dataset CSV in `data/` from the 102-song
    seed list and research findings (including `[video_id]`, BPM, section
    timestamps, `takamari` proxy features, and ground-truth annotation columns).
 2) `recommender-core`: Update `src/recommender.py`, `src/main.py`, and
