@@ -1,0 +1,254 @@
+WOTAGEI RECOMMENDER - SESSION STARTER PROMPTS
+==============================================
+
+Plan (Antigravity):
+- Phase 1 (Research): Run Sessions 1-3 in parallel via ONE `/teamwork` session
+  (Model: Pro | Effort: Medium) — or 3 separate chat tabs.
+- Phase 2 (Spec): Start Session 4 in a FRESH chat tab only after all three
+  `research/*.md` files exist (Model: Pro | Effort: High).
+- Set model & effort in the Antigravity chat dropdown before sending.
+
+Repo baseline (verified):
+- `data/songs.csv` has 18 synthetic placeholder tracks (0 real/Japanese songs).
+- Existing schema: `id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness,popularity,duration_ms,release_year`.
+- Upgrading requires building a new real-song catalog (Japanese wotagei/idol/anime + optional English tracks with AB-melo -> chorus structure and takamari).
+
+Glossary:
+- wotagei (ヲタ芸): fan light-stick dance performed to idol songs
+- 打ち曲 (uchi-kyoku): songs suited to wotagei
+- takamari (高まり): the rise in intensity/tension into the chorus
+- AB melo -> sabi: verse (A melody), pre-chorus (B melody), chorus (サビ)
+- MIR: music information retrieval
+
+
+------------------------------------------------------------
+PHASE 1 (/teamwork): Run Sessions 1-3 in parallel
+Model: Pro | Effort: medium
+------------------------------------------------------------
+/teamwork Run these three research tasks in parallel (one `research` worker per
+task) and save each output to its target file:
+
+1) Worker `data-sources` -> `research/wotagei-data-sources.md`
+   Investigate free databases, APIs, or curated lists of songs suited for
+   wotagei (ヲタ芸 / 打ち曲), plus whether any English-language tracks appear in
+   wotagei/oshi-katsu lists. Check Japanese-language sources (fan wikis,
+   Uta-Net, niconico, X/Twitter lists, MusicBrainz tags). For each source
+   report: free or paid, access method (API, scrape, manual), fields available
+   (compare against `data/songs.csv` columns), Japanese-only or not, and
+   last-updated date. Primary sources only; mark anything unverified. Context:
+   AI class final project, replacing a 18-row synthetic CSV recommender with a
+   real wotagei recommender.
+
+2) Worker `audio-features` -> `research/audio-feature-sources.md`
+   Investigate free sources of audio features (energy, loudness, tempo, etc.)
+   currently available for Japanese pop and English pop songs. First verify
+   whether Spotify's audio-features endpoint was restricted for new apps in late
+   2024. Also check AcousticBrainz dump, Essentia and librosa local analysis,
+   and any free API. Since Essentia/librosa require audio files, also check
+   legal free audio/30s-preview sources (e.g., iTunes Search API, Deezer,
+   YouTube/yt-dlp ToS). For each report: J-pop coverage, rate limits, ToS
+   limits, and Python effort. Context: AI class final project, free tools only.
+
+3) Worker `takamari` -> `research/takamari-definition.md`
+   Investigate how "takamari" (高まり, the rise in intensity into the chorus in
+   songs like Mizuki Nana's) can be measured. Check MIR literature on chorus
+   detection and build-up/tension curves, plus wotagei community discussions of
+   how 打ち曲 are chosen (AB melo -> サビ structure, BPM range, energy curve).
+   Check existing guide: https://wikiwiki.jp/neosr/ヲタ芸の基本的な構成
+   Propose 2-3 measurable proxies (e.g., RMS loudness slope, onset density,
+   spectral centroid) with citations, and note whether they apply to English
+   pop/EDM/rock tracks too.
+
+
+------------------------------------------------------------
+PHASE 2 (Session 4): Spec & Architecture (Recommender + Rubric + Demo)
+Model: Gemini 4 Argon (High)
+Prereq: all three `research/*.md` files exist (DONE)
+Output: spec in `docs/` + `diagrams/architecture.mmd`
+------------------------------------------------------------
+/grill-me Read `research/*.md`, `src/`, `data/songs.csv`, `README.md`, and
+`model_card.md` first. We are upgrading this Module 3 `Music Recommender
+Simulation` into our AI110 Week 9 Final Project (`Applied AI System`): a
+wotagei (ヲタ芸 / 打ち曲) recommender. Goal: recommend songs with AB melo ->
+chorus structure, a target BPM range, and a takamari rise into the chorus, with
+confidence scoring, guardrails/logging, a reproducible evaluation test harness
+(+2 stretch), and a 1-minute video demo display. Seed examples are my 95-song
+YouTube Music playlist below (with YouTube `[video_id]`s). Keep it
+class-project sized, then produce the implementation spec in `docs/` and
+`diagrams/architecture.mmd` via `/plan`.
+
+Required AI110 Project 4 rubric deliverables the spec MUST cover:
+1. Folder & Diagram (`diagrams/architecture.mmd` + `assets/`): Mermaid source
+   file showing main components (retriever/scorer, guardrail/confidence checker,
+   evaluator), data flow (input -> process -> output), and human/testing
+   checkpoints.
+2. AI Feature + Guardrails & Logging (`src/recommender.py`, `src/main.py`):
+   - Confidence scoring on recommendations and `takamari` proxy estimates.
+   - Guardrails & structured logging that flag/hesitate on low-confidence
+     tracks, missing section timestamps, or out-of-range BPM instead of
+     recommending blindly.
+   - Optional RAG / Agentic explanation layer if lightweight.
+3. Evaluation & Stretch Test Harness (`src/evaluate.py` or `tests/`):
+   - Runnable evaluation script on predefined test inputs + human ground-truth
+     annotations printing pass/fail summary, confidence ratings, and a parseable
+     markdown table (`Test Input | Evaluation Criteria | Result`).
+4. Graded Documentation (`README.md`, `model_card.md`, `ai_interactions.md`):
+   - `README.md`: Name original Module 3 project + 2-3 sentence baseline
+     summary; title/summary; architecture overview; setup steps; 2-3 fenced
+     code-block sample CLI runs (normal runs + guardrail trigger) as
+     text-based grading evidence; parseable evaluation table; design decisions
+     & trade-offs; testing summary; brief reflection note.
+   - `model_card.md` (graded reflection — required here, not just README):
+     clearly labeled headers answering: (a) limitations/biases, (b) misuse &
+     prevention, (c) what surprised us during reliability testing, and (d) AI
+     collaboration (1 suggestion accepted + 1 suggestion rejected/revised and
+     why).
+   - `ai_interactions.md`: Log intermediate reasoning/agent collaboration traces
+     (+2 stretch).
+
+Open decisions to settle in this session:
+- Data source: hand-annotate ~15-30 songs from the seed list below (section
+  timestamps + 1-5 takamari score) vs. audio-feature proxy. Annotations serve
+  as ground truth to validate the proxy against.
+- 1-minute video demo display (pick one to include in the spec):
+  a) Single-page Streamlit/HTML dashboard showing top-3 recommendations, an
+     `A-melo -> B-melo -> Sabi` takamari energy curve (recommended vs. rejected
+     flat track), and an embedded YouTube player queued to the B-melo -> Sabi
+     drop timestamp using the `[video_id]`s below.
+  b) Terminal + Matplotlib plot (colored CLI score breakdown + saved PNG plot in
+     `assets/` of the takamari curve and ground-truth vs. predicted comparison).
+- Seed input (95 YouTube Music tracks with `[video_id]`):
+  1. ETERNAL BLAZE — Nana Mizuki [iEBAmO7RXEw]
+  2. MARBLE — 樋口 楓 [XlxV1c3ci6w]
+  3. 自分REST@RT — 765PRO ALLSTARS [IxYvNGAFjJE]
+  4. Say!ファンファーレ! — 白上フブキ [hFp3C4k1lec]
+  5. ようこそジャパリパークへ - Welcome to Japari Park — Doubutsu Biscuits x PPP [Zk9iH-nunro]
+  6. ハレ晴レユカイ - Hare Hare Yukai — Aya Hirano, Minori Chihara & Yuko Goto [1jePZ8SBNuA]
+  7. adrenaline!!! — TrySail [-Y1t16ekYX4]
+  8. ルカルカ★ナイトフィーバー - Luka Luka★Night Fever — samfree feat. Megurine Luka [ScSW9C3DF18]
+  9. only my railgun — fripSide [RPqLIZw3M98]
+  10. Sunset カンフー (Live at Makuhari Messe 2019.08.04) - Sunset Kung Fu (Live at Makuhari Messe 2019.08.04) — TrySail [FVi9yEkvDyw]
+  11. すきっ！～超ver～ - SUKI! ~CHOver~ — Cho Tokimeki Sendenbu [uumZNFz84Dg]
+  12. Shooting Stars — CRESCENDO BLUE, Shizuka Mogami (CV: Azusa Tadokoro), Reika Kitakami (CV: Emi Hirayama) & Shiho Kitazawa (CV: Sora Amamiya) [gVMTlsJPsaE]
+  13. Snow halation — μ's [44JS3EaectY]
+  14. LEVEL5-judgelight- — fripSide [4SvTXnvGycY]
+  15. 可変３連MIXをおぼえる歌 — iLiFE! [kXjMuPq9x8Q]
+  16. アイドルライフスターターパック - Idol life starter pack — iLiFE! [8MrZYYvFc6k]
+  17. BUNBUN NINE9' — Cheeky Parade [Kbu2tg8bQjI]
+  18. 行くぜっ！怪盗少女 - Ikuze! Kaitou Shoujo — Momoiro Clover [BLprVBOPi7s]
+  19. 全力バタンキュー - Zenryoku Batankyu — AOP [1mQ8m3LGdYM]
+  20. OIDEMASE!!～極楽～ 2021 — FES☆TIVE [zaXw124kIn8]
+  21. パレリラパレリラ - pareriraparerira — appare!harajuku [zYEK16vKqYs]
+  22. うまぴょい伝説 — Uma Musume Pretty Derby [jIZadPWm7VM]
+  23. JIMO-AI Dash! — Aqours [EeyGCkrCPZ4]
+  24. マジ感動☆香港 - Maji Kandou ☆ Hong Kong Night — Hong Kong (CV: Motoki Takagi) [mPye5kBLm54]
+  25. 極上スマイル - Gokujo Smile — I-1 Club [jn2eQ2U-2oI]
+  26. stone cold — FictionJunction [JaNwk_fSKJs]
+  27. シダレヤナギ 2021 — FES☆TIVE [G1bqGgi0Z6k]
+  28. 月曜日の憂鬱 - Getsuyobi no Yuutsu — AMATSUKI [GFxUqRja66Y]
+  29. いけないボーダーライン - Ikenai Borderline — Walkure [6HYHdkEYdQE]
+  30. サインはB — B-Komachi [mRChN9kFizI]
+  31. HEART's♡KISS — B-Komachi [QkwPdgLWab8]
+  32. STAR☆T☆RAIN — B-Komachi [yg2jWoxrnoo]
+  33. おジャ魔女カーニバル!! (5人Ver.) — MAHO-DO [gM5yKQfdlk8]
+  34. コットンキャンディえいえいおー！ - Cotton Candy E-I-E-I-O-! — Ruby Kurosawa (CV: Ai Furihata) [ERVPgg3Ic54]
+  35. SHOUT — pure white canvas [wAZaXj-gXw0]
+  36. 史上最強うぇぽん - shijosaikyo uepon — chuLa [ayXqNPi1muE]
+  37. EVERYBODY! EVERYBODY! — YU SERIZAWA with DJ KOO & MOTSU [O7q7YIQBVnE]
+  38. PSYCHIC FIRE — BiBi & μ's [YGEaO_zshM0]
+  39. DISCOTHEQUE — Nana Mizuki [pQ6oN4Auwdw]
+  40. NIGHT OF FIRE — Team HINOI with Kolickey [5bnfAMLYrjA]
+  41. Daisuke — Y&Co. [AdcLYZRVWQE]
+  42. ハレ晴レユカイ～Ver.長門有希～ - Hare Hare Yukai (Yuki Nagato Version) — Yuki Nagato (CV: Minori Chihara) [_473guNw8V0]
+  43. 極楽浄土 - Gokuraku Joudo — GARNiDELiA [zOTrWW-p-cA]
+  44. GGT-ROCK — GOKIGEN TEIKOKU -The Movie- [GR4es4on6lo]
+  45. READY!! — 765PRO ALLSTARS [7-LJ4o8HGdo]
+  46. もってけ！セーラーふく — Aya Hirano, Emiri Kato, Kaori Fukuhara & Aya Endo [GLUKOY6J4fs]
+  47. Synchrogazer — Nana Mizuki [pJzNzllwNUI]
+  48. LOVEドッきゅん - LOVE Dokkyun — club Prince [FCWo18fwuhs]
+  49. U.S.A. — DA PUMP [LPr_UZkmVn8]
+  50. Cutie Panther — BiBi (μ's) [kwjG3FXppZc]
+  51. ワガママMIRROR HEART — 大橋彩香 [xA8r95gFckY]
+  52. お控えなすって神宿でござる — 神宿 [6JdPLiK4KwQ]
+  53. ドキドキラビリンス - Doki Doki Labyrinth — Yui Ogura [9lkuTmnDz3Q]
+  54. いぬねこ。青春真っ盛り - Dogs & Cats, In the Bloom of Youth — Wasuta [FpeQuFD7amQ]
+  55. あいこめフォーエバー - Aikome Forever — at-home cafe [GYtypsMMWSs]
+  56. ガーリッシュエイジ - Girlish Age — Yui Ogura [nuDsx4S9j8Y]
+  57. Raise (album ver.) - Raise(album ver.) — Yui Ogura [LBN5disCDc8]
+  58. 最高速 Fall in Love — ミーア、パピ、セントレア、スー、メロ、ラクネラ [JWfemp8fYuM]
+  59. １・２・３ - one two three — karaageshimai [wzQ15iQg4FQ]
+  60. ニッポン笑顔百景 - Nippon Egao Hyakkei — Momoclo Tei Ichimon & Momoiro Clover Z [2ch_p04MTHg]
+  61. Z伝説　～終わりなき革命～ - Z Densetsu-Owarinaki Kakumei- — Momoiro Clover Z [7a4oE9YtAac]
+  62. Shine In The Sky☆ - Shine in the Sky — U149 [oi3cUBLkVN8]
+  63. ガールズ・イン・ザ・フロンティア (GAME VERSION) - Girls in the Frontier (Game Version) — Rin Shibuya (CV: Ayaka Fukuhara), Mirei Hayasaka (CV: Ayaka Asai), Natsuki Kimura (CV: Kiyono Yasuno), Miho Kohinata (CV: Minami Tsuda) & Shuko Shiomi (CV: Ru Thing) [WgSiGKrgJlU]
+  64. Yes! Party Time!! (Game Version) — Uzuki Shimamura (CV: Ayaka Ohashi), Rin Shibuya (CV: Ayaka Fukuhara), Mio Honda (CV: Sayuri Hara), Miria Akagi (CV: Tomoyo Kurosawa) & Nana Abe (CV: Marie Miyake) [ov2i03SNL70]
+  65. Can't Stop!! (Game Version) — Sanae Katagiri (CV: Azumi Waki) [fvDVUmr4HQU]
+  66. Endless Story — Yukari Tamura [peJg9IxA87o]
+  67. You & Me — Yukari Tamura [a5IAPo8v7h8]
+  68. ハイタッチ☆メモリー - Hight Touch Memory — Yui Ogura [-g_fil9BljY]
+  69. Won(*3*)Chu Kiss Me! — 高山春香(CV:戸松遥), 南しずく(CV:五十嵐裕美), 飯塚ゆず(CV:戸田めぐみ) & 池野楓(CV:渕上舞) [1Q3GqEKO8Xo]
+  70. STAR☆T☆RAIN -New Arrange Ver.- — B小町 ルビー（CV：伊駒ゆりえ）、有馬かな（CV：潘めぐみ）、MEMちょ（CV：大久保瑠美） [7lpZ_dEvLSs]
+  71. サインはB -New Arrange Ver.-（instrumental） — B小町 ルビー（CV：伊駒ゆりえ）、有馬かな（CV：潘めぐみ）、MEMちょ（CV：大久保瑠美） [GQb3LxrQI4c]
+  72. Astrogation — Nana Mizuki [nMkpQWAwRdY]
+  73. fortissimo-from insanity affection- — fripSide [8CHMjG_l1v8]
+  74. One Night Carnival — Momoiro Clover Z [wXrP8v0Dojc]
+  75. Fightin★Pose - Fightin Pose — Yui Ogura [jGYshn4pCrk]
+  76. Rat A Tat!!! — MILLIONSTARS [Iji4ODkdvXU]
+  77. 異次元★♥BIGBANG - Ijigen BIGBANG — Uzuki Shimamura (CV: Ayaka Ohashi), Shizuka Mogami (CV: Azusa Tadokoro), KOGANE TSUKIOKA (CV: Karin Isobe) & Chika Takami (CV: Anju Inami) [3x8NErsTewM]
+  78. MOON NIGHTのせいにして — DRAMATIC STARS [I8bgJ97hd4Q]
+  79. Snow Wings (Game Version) — Uzuki Shimamura (CV: Ayaka Ohashi), Rin Shibuya (CV: Ayaka Fukuhara), Mio Honda (CV: Sayuri Hara), Yui Otsuki (CV: Nanami Yamashita) & Haruna Kamijo (CV: Mina Nagashima) [6eWkGIRjn74]
+  80. ジャングル☆パーティー - Jungle Party — Tamaki Ogami (CV: Eri Inagawa) & Mami Futami (CV: Asami Shimoda)
+  81. 完全無敵あいうえお - Kanzenmutekiaiueo — chuLa [PMeesN8WxCc]
+  82. Shooting STAR — chuLa [IGgMmQeyvpw]
+  83. 呼び捨てファンタジー(歌:team B) - Yobisute Fantasy (Uta:Team K) — AKB48 [3uIgrbC_mtQ]
+  84. 大江戸爆裂花火姫 — FES☆TIVE [D9N-jMbZafo]
+  85. ハレとケ!あっぱれ!ジャパニーズ! — FES☆TIVE [7WWJUBbRs5E]
+  86. トライアングル・ドリーマー — Niji no Conquistador [xDOeZ65mSjo]
+  87. Eternal Harmony — ETERNAL HARMONY, Chihaya Kisaragi (CV: Asami Imai), Emily Stewart (CV: Yu Kahara) & Julia (CV: Aimi) [45-NOYrinL0]
+  88. Lv.0の勇者 - Lv.0 Hero — Sasaki Saku [F1mGOfcnYYY]
+  89. 冠菊 - Kamurogiku — Hatsuboshi Gakuen, Lilja Katsuragi, Saki Hanami & Kotone Fujita [XqIhCSiRIO4]
+  90. 叶えたい、ことばかり - Dream of that Day — Hatsuboshi Gakuen, Toma Tanaka & Temari Tsukimura [WTrdlgJqqAw]
+  91. KNOT — DOLLCHESTRA [r0HbxEKeMGs]
+  92. 3×ザ・ライド - 3x The Ride — Aozora Sorano [cD4JEm7R5xU]
+  93. Over The Future — Karen Girl's [zIjJR0PbheI]
+  94. RPG — School Food Punishment [UQuJvuTqimE]
+  95. How to Go — School Food Punishment [mhu4Axq1LPw]
+  96. DO! — METANICK [8EfeKSX0CQk]
+
+- Language scope: Japanese-only 打ち曲 vs. mixed JP + English tracks that share
+  AB-melo -> chorus + takamari structure.
+- Reference examples: https://wikiwiki.jp/neosr/打ち曲
+
+
+------------------------------------------------------------
+PHASE 3 (Session 5): Implementation, Demo Display & Rubric Docs
+Model: Orchestrator (Argon) or Gemini 4 Hydrogen (High)
+Prereq: spec in `docs/` exists from Phase 2
+------------------------------------------------------------
+/teamwork Implement the spec in `docs/` using parallel workers so all AI110
+Week 9 Project 4 rubric + stretch requirements pass:
+
+1) `catalog-builder`: Build the song dataset CSV in `data/` from the 95-song
+   seed list and research findings (including `[video_id]`, BPM, section
+   timestamps, `takamari` proxy features, and ground-truth annotation columns).
+2) `recommender-core`: Update `src/recommender.py`, `src/main.py`, and
+   `src/evaluate.py` + `tests/`:
+   - Wotagei scoring (BPM + AB-melo -> Sabi + `takamari` rise)
+   - Confidence scoring, guardrails (hesitate/warn on missing timestamps or low
+     confidence), and structured execution logging
+   - Runnable evaluation harness (`src/evaluate.py`) outputting pass/fail +
+     confidence summary and a parseable markdown table (+2 stretch).
+3) `demo-ui`: Build the 1-minute demo display specified in `docs/` (`A -> B ->
+   Sabi` takamari curve plot saved to `assets/`, recommended vs. rejected flat
+   track comparison, and YouTube `[video_id]` preview queued to the B-melo ->
+   Sabi drop) plus ensure `diagrams/architecture.mmd` and `assets/` exist.
+4) `rubric-docs`: Update `README.md`, `model_card.md`, and `ai_interactions.md`
+   after running `src/main.py` and `src/evaluate.py`:
+   - Paste real, reproducible fenced code-block CLI outputs (2-3 end-to-end
+     runs + guardrail trigger) and the parseable markdown evaluation table into
+     `README.md`, along with the Module 3 baseline summary and setup steps.
+   - Complete all 4 required reflection sections in `model_card.md` (limitations
+     & biases, misuse & prevention, reliability testing surprise, and 1
+     accepted + 1 rejected/revised AI suggestion).
+   - Record agentic/collaboration traces in `ai_interactions.md`.
+
